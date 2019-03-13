@@ -26,12 +26,18 @@ module.exports = options => ({
   module: {
     rules: [
       {
-        test: /\.js$/, // Transform all .js files required somewhere with Babel
+        test: /\.(t|j)sx?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-          options: options.babelQuery,
+          loader: 'ts-loader',
         },
+      },
+      // addition - add source-map support
+      {
+        enforce: 'pre',
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'source-map-loader',
       },
       {
         // Preprocess our own .css files
@@ -125,7 +131,7 @@ module.exports = options => ({
   ]),
   resolve: {
     modules: ['node_modules', 'app'],
-    extensions: ['.js', '.jsx', '.react.js'],
+    extensions: ['.js', '.jsx', '.react.js', '.ts', '.tsx'],
     mainFields: ['browser', 'jsnext:main', 'main'],
   },
   devtool: options.devtool,

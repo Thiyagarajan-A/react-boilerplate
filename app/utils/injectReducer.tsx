@@ -11,7 +11,13 @@ import getInjectors from './reducerInjectors';
  * @param {function} reducer A reducer that will be injected
  *
  */
-export default ({ key, reducer }) => WrappedComponent => {
+
+export interface IReducerConfig {
+  key: string;
+  reducer: Function;
+}
+
+export default ({ key, reducer }: IReducerConfig) => WrappedComponent => {
   class ReducerInjector extends React.Component {
     static WrappedComponent = WrappedComponent;
 

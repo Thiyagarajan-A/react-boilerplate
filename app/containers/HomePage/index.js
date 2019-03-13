@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
-import { FormattedMessage } from 'react-intl';
+
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
@@ -26,7 +26,7 @@ import CenteredSection from './CenteredSection';
 import Form from './Form';
 import Input from './Input';
 import Section from './Section';
-import messages from './messages';
+
 import { loadRepos } from '../App/actions';
 import { changeUsername } from './actions';
 import { makeSelectUsername } from './selectors';
@@ -63,23 +63,15 @@ export class HomePage extends React.PureComponent {
         </Helmet>
         <div>
           <CenteredSection>
-            <H2>
-              <FormattedMessage {...messages.startProjectHeader} />
-            </H2>
-            <p>
-              <FormattedMessage {...messages.startProjectMessage} />
-            </p>
+            <H2>Project Header</H2>
+            <p>Project Message</p>
           </CenteredSection>
           <Section>
-            <H2>
-              <FormattedMessage {...messages.trymeHeader} />
-            </H2>
+            <H2>Try Me Header</H2>
             <Form onSubmit={this.props.onSubmitForm}>
               <label htmlFor="username">
-                <FormattedMessage {...messages.trymeMessage} />
-                <AtPrefix>
-                  <FormattedMessage {...messages.trymeAtPrefix} />
-                </AtPrefix>
+                {`Try me Message`}
+                <AtPrefix>@</AtPrefix>
                 <Input
                   id="username"
                   type="text"

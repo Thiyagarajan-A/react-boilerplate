@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
+import { SagaMode } from 'utils/constants';
+
 import getInjectors from './sagaInjectors';
 
 /**
@@ -15,7 +17,14 @@ import getInjectors from './sagaInjectors';
  *   - constants.ONCE_TILL_UNMOUNT—behaves like 'RESTART_ON_REMOUNT' but never runs it again.
  *
  */
-export default ({ key, saga, mode }) => WrappedComponent => {
+
+export interface ISagaConfig {
+  key: string;
+  saga: any;
+  mode?: SagaMode;
+}
+
+export default ({ key, saga, mode }: ISagaConfig) => WrappedComponent => {
   class InjectSaga extends React.Component {
     static WrappedComponent = WrappedComponent;
 

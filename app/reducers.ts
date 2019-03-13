@@ -2,12 +2,11 @@
  * Combine all reducers in this file and export the combined reducers.
  */
 
-import { combineReducers } from 'redux-immutable';
-import { connectRouter } from 'connected-react-router/immutable';
+import { combineReducers } from 'redux-seamless-immutable';
+import { connectRouter } from 'connected-react-router/seamless-immutable';
 
 import history from 'utils/history';
 import globalReducer from 'containers/App/reducer';
-import languageProviderReducer from 'containers/LanguageProvider/reducer';
 
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
@@ -15,7 +14,6 @@ import languageProviderReducer from 'containers/LanguageProvider/reducer';
 export default function createReducer(injectedReducers = {}) {
   const rootReducer = combineReducers({
     global: globalReducer,
-    language: languageProviderReducer,
     ...injectedReducers,
   });
 

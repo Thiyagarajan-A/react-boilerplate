@@ -1,3 +1,12 @@
+export class ResponseError extends Error {
+  public response: Response;
+
+  constructor(response: Response) {
+    super(response.statusText);
+    this.response = response;
+  }
+}
+
 /**
  * Parses the JSON returned by a network request
  *
@@ -24,9 +33,7 @@ function checkStatus(response) {
     return response;
   }
 
-  const error = new Error(response.statusText);
-  error.response = response;
-  throw error;
+  throw new ResponseError(response);
 }
 
 /**
@@ -37,8 +44,9 @@ function checkStatus(response) {
  *
  * @return {object}           The response data
  */
-export default function request(url, options) {
+export default function request(url: string, options?: RequestInit): Promise<{ data: any } | { err: ResponseError }> {
   return fetch(url, options)
     .then(checkStatus)
-    .then(parseJSON);
+    .then(parseJSON)
+    .catch(err => ({ err }));
 }

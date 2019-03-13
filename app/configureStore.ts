@@ -2,13 +2,25 @@
  * Create the store with dynamic reducers
  */
 
-import { createStore, applyMiddleware, compose } from 'redux';
-import { fromJS } from 'immutable';
-import { routerMiddleware } from 'connected-react-router/immutable';
-import createSagaMiddleware from 'redux-saga';
+import { createStore, applyMiddleware, compose, Store, ReducersMapObject} from 'redux';
+// import { fromJS } from 'immutable';
+import Immutable from 'seamless-immutable';
+import { routerMiddleware } from 'connected-react-router/seamless-immutable';
+import createSagaMiddleware, { Task } from 'redux-saga';
 import createReducer from './reducers';
 
 const sagaMiddleware = createSagaMiddleware();
+
+export interface IStore<T> extends Store<T> {
+  runSaga?: (saga: Function | Function[]) => Task; // TODO: cleanup
+  injectedReducers?: ReducersMapObject;
+  injectedSagas?: any;
+}
+
+declare interface IWindow extends Window {
+  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: (IReduxDevToolsConfig) => any;
+}
+declare const window: IWindow;
 
 export default function configureStore(initialState = {}, history) {
   // Create the store with two middlewares
@@ -28,9 +40,9 @@ export default function configureStore(initialState = {}, history) {
       : compose;
   /* eslint-enable */
 
-  const store = createStore(
+  const store: IStore<any> = createStore(
     createReducer(),
-    fromJS(initialState),
+    Immutable(initialState),
     composeEnhancers(...enhancers),
   );
 

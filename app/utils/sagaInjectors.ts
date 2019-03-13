@@ -2,9 +2,18 @@ import invariant from 'invariant';
 import { isEmpty, isFunction, isString, conformsTo } from 'lodash';
 
 import checkStore from './checkStore';
-import { DAEMON, ONCE_TILL_UNMOUNT, RESTART_ON_REMOUNT } from './constants';
+// import { DAEMON, ONCE_TILL_UNMOUNT, RESTART_ON_REMOUNT } from './constants';
 
-const allowedModes = [RESTART_ON_REMOUNT, DAEMON, ONCE_TILL_UNMOUNT];
+// const allowedModes = [RESTART_ON_REMOUNT, DAEMON, ONCE_TILL_UNMOUNT];
+
+import {
+  SagaMode,
+} from './constants';
+
+export interface IDescriptor {
+  saga?: Function;
+  mode?: string;
+}
 
 const checkKey = key =>
   invariant(
@@ -12,10 +21,10 @@ const checkKey = key =>
     '(app/utils...) injectSaga: Expected `key` to be a non empty string',
   );
 
-const checkDescriptor = descriptor => {
+const checkDescriptor = (descriptor: IDescriptor) => {
   const shape = {
     saga: isFunction,
-    mode: mode => isString(mode) && allowedModes.includes(mode),
+    mode: mode => isString(mode) && Object.values(SagaMode).includes(mode),
   };
   invariant(
     conformsTo(descriptor, shape),
@@ -24,12 +33,12 @@ const checkDescriptor = descriptor => {
 };
 
 export function injectSagaFactory(store, isValid) {
-  return function injectSaga(key, descriptor = {}, args) {
+  return function injectSaga(key: string, descriptor: IDescriptor = {}, args: any) {
     if (!isValid) checkStore(store);
 
     const newDescriptor = {
       ...descriptor,
-      mode: descriptor.mode || RESTART_ON_REMOUNT,
+      mode: descriptor.mode || SagaMode.RESTART_ON_REMOUNT,
     };
     const { saga, mode } = newDescriptor;
 
@@ -49,7 +58,7 @@ export function injectSagaFactory(store, isValid) {
 
     if (
       !hasSaga ||
-      (hasSaga && mode !== DAEMON && mode !== ONCE_TILL_UNMOUNT)
+      (hasSaga && mode !== SagaMode.DAEMON && mode !== SagaMode.ONCE_TILL_UNMOUNT)
     ) {
       /* eslint-disable no-param-reassign */
       store.injectedSagas[key] = {
@@ -69,7 +78,7 @@ export function ejectSagaFactory(store, isValid) {
 
     if (Reflect.has(store.injectedSagas, key)) {
       const descriptor = store.injectedSagas[key];
-      if (descriptor.mode && descriptor.mode !== DAEMON) {
+      if (descriptor.mode && descriptor.mode !== SagaMode.DAEMON) {
         descriptor.task.cancel();
         // Clean up in production; in development we need `descriptor.saga` for hot reloading
         if (process.env.NODE_ENV === 'production') {
